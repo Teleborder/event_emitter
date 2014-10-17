@@ -1,7 +1,6 @@
-
 module EventEmitter
   def self.included(klass)
-    # klass.extend ClassMethods
+    klass.extend ClassMethods
     klass.__send__ :include, InstanceMethods
   end
 
@@ -10,6 +9,7 @@ module EventEmitter
   end
 
   module ClassMethods
+    include InstanceMethods
   end
 
   module InstanceMethods
@@ -60,6 +60,11 @@ module EventEmitter
       __events.each do |e|
         remove_listener e[:id] unless e[:type]
       end
+    end
+
+    def emit_to_all(type, *data)
+      emit(type, *data)
+      self.class.emit(type, *data)
     end
 
     def once(type, &block)
