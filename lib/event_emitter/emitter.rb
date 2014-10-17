@@ -60,7 +60,7 @@ module EventEmitter
       __events.each do |e|
         remove_listener e[:id] unless e[:type]
       end
-      self.class.instance_emit(type, *data) if self.class.respond_to? :instance_emit
+      self.class.instance_emit(self, type, *data) if self.class.respond_to? :instance_emit
     end
 
     def once(type, &block)
@@ -76,7 +76,7 @@ module EventEmitter
       @__instance_events ||= []
     end
 
-    def add_listener_to_instance(type, params={}, &block)
+    def add_instance_listener(type, params={}, &block)
       raise ArgumentError, 'listener block not given' unless block_given?
       id = __instance_events.empty? ? 0 : __instance_events.last[:id]+1
       __instance_events << {
@@ -88,7 +88,7 @@ module EventEmitter
       id
     end
 
-    alias :instance_on :add_listener_to_instance
+    alias :instance_on :add_instance_listener
 
     def remove_listener_from_instance(id_or_type)
       if id_or_type.class == Fixnum
@@ -104,7 +104,7 @@ module EventEmitter
 
     def instance_emit(instance, type, *data)
       type = type.to_sym
-      __events.each do |e|
+      __instance_events.each do |e|
         case e[:type]
         when type
           listener = e[:listener]
@@ -116,13 +116,13 @@ module EventEmitter
           instance.instance_exec(type, *data, &listener)
         end
       end
-      __events.each do |e|
+      __instance_events.each do |e|
         remove_listener_from_instance e[:id] unless e[:type]
       end
     end
 
     def instance_once(type, &block)
-      add_listener_to_instance type, {:once => true}, &block
+      add_instance_listener type, {:once => true}, &block
     end
   end
 
