@@ -8,10 +8,6 @@ module EventEmitter
     object.extend InstanceMethods
   end
 
-  module ClassMethods
-    include InstanceMethods
-  end
-
   module InstanceMethods
     def __events
       @__events ||= []
@@ -62,7 +58,7 @@ module EventEmitter
       end
     end
 
-    def emit_to_all(type, *data)
+    def broadcast(type, *data)
       emit(type, *data)
       self.class.emit(type, *data)
     end
@@ -71,6 +67,10 @@ module EventEmitter
       add_listener type, {:once => true}, &block
     end
 
+  end
+
+  module ClassMethods
+    include InstanceMethods
   end
 
 end
