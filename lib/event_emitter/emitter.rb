@@ -27,10 +27,6 @@ module EventEmitter
 
     alias :on :add_listener
 
-    def add_listener_to_instance(type, params={}, &block)
-
-    end
-
     def remove_listener(id_or_type)
       if id_or_type.class == Fixnum
         __events.delete_if do |e|
