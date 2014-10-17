@@ -42,7 +42,7 @@ class User
 end
 ```
 
-regist event listener
+register event listener
 ```ruby
 user = User.new
 user.name = "shokai"
@@ -92,6 +92,21 @@ user.on :* do |event_name, args|
   p args
 end
 ```
+
+listen to all instances of a class
+```ruby
+User.instance_on :eat do |what, where|
+  puts "#{name} -> eat #{what} at #{where}"
+end
+```
+
+call
+```ruby
+user = User.new
+user.name = "shokai"
+user.emit :eat, "BEEF", "zanmai"  # =>  "shokai -> eat BEEF at zanmai"
+```
+
 
 see samples https://github.com/shokai/event_emitter/tree/master/samples
 
